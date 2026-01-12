@@ -33,7 +33,7 @@ class Factory{
     public:
 
     void do_deliveries(Time);
-    void do_package_passing(void);
+    void do_package_passing();
     void do_work(Time);
 
     
