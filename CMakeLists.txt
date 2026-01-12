@@ -10,6 +10,7 @@ add_subdirectory(googletest)
 add_library(storage_types
         src/storage_types.cpp
         src/Package.cpp
+        src/nodes.cpp
 )
 
 target_include_directories(storage_types
