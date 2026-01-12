@@ -5,6 +5,12 @@
 #ifndef NODES_HPP
 #define NODES_HPP
 #include "storage_types.hpp"
+
+enum class ReceiverType {
+    WORKER, STOREHOUSE
+};
+
+
 class IPackageReceiver {
   public:
     virtual void receive_package(Package& package) = 0;
@@ -13,6 +19,9 @@ class IPackageReceiver {
     const IPackageStockpile::const_iterator cbegin() const {return packages.cbegin();}
     const IPackageStockpile::const_iterator cend() const {return packages.cend();}
     ElementID get_id() const {return packages.front().id;}
+    virtual ReceiverType get_receiver_type() const = 0;
+
+
   private:
     std::list<Package> packages;
   };
