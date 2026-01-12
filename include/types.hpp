@@ -8,5 +8,6 @@
 /// used to represent IDs of elements (packages)
 using element_ID = int;
 
+using Time = unsigned;
 
 #endif //TYPES_HPP
