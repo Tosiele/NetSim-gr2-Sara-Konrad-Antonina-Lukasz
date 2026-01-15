@@ -7,28 +7,26 @@ using ElementID = long long;
 
 class Package {
 public:
-    Package();//base constructor
 
-    Package(ElementID id); // 2. Constructor based on ElementID (z konkretnym ID)
+//three constructors: base, ID based, r-value based (moving)
+    Package();
 
-    Package(Package&& other) noexcept; // 3. Constructor based on other Package r-value (przenoszący)
+    Package(ElementID id);
 
-    // --- METODY I OPERATORY ---
+    Package(Package&& other) noexcept;
 
-    // Package equality operator (czy paczki są takie same?)
-    bool operator==(const Package& other) const; // Zadanie: Equality operator
+//methods
+    bool operator==(const Package& other) const; //Equality operator
 
-    // Metoda pobierająca ID
-    ElementID get_id() const;
+    ElementID get_id() const;// id getter
 
-    // --- DESTRUKTOR (Zadanie #4) ---
+//destructor
     ~Package();
 
 private:
-    ElementID id_; // Tutaj przechowujemy ID konkretnej paczki
+    ElementID id_;
 
-    // --- POLA STATYCZNE (Zadanie: assigned_IDs list, freed_IDs list) ---
-    // Są statyczne (static), bo lista zajętych ID jest wspólna dla WSZYSTKICH paczek
+    // static lists of IDs that are currently in usage or freed
     static std::set<ElementID> assigned_IDs;
     static std::set<ElementID> freed_IDs;
 };
