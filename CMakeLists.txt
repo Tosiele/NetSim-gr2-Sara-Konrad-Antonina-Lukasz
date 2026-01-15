@@ -19,6 +19,7 @@ target_include_directories(storage_types
 
 add_executable(storage_types_tests
         test/section_1_tests.cpp
+        test/section_2_tests.cpp
 )
 
 target_link_libraries(storage_types_tests
