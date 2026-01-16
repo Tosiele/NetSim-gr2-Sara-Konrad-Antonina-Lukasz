@@ -36,6 +36,15 @@ class NodeCollection {
 
         }
 
+        void remove_by_id(element_ID id) {
+            auto it = find_by_id(id);
+            
+            if (it != container.end()) {
+                container.erase(it);
+            }
+
+        }
+        
         void add(Node&& node){
             container.push_back(std::move(node));
         }
