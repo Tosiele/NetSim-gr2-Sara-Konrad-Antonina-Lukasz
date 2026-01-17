@@ -5,7 +5,6 @@
 #ifndef STORAGE_TYPES_HPP
 #define STORAGE_TYPES_HPP
 #include <iostream>
-#include "types.hpp"
 #include <list>
 #include "Package.hpp"
   enum class QueueType {

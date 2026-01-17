@@ -16,9 +16,4 @@ using TimeOffset = int;
 
 using ProbabilityGenerator = std::function<double()>;
 
-std::random_device rd;
-std::mt19937 rng(rd());
-double probability_generator() {
-    return std::generate_canonical<double, 10>(rng);
-}
 #endif //TYPES_HPP

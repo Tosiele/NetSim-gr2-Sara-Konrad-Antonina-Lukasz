@@ -5,11 +5,14 @@
 #ifndef NODES_HPP
 #define NODES_HPP
 #include "storage_types.hpp"
-#include "Package.hpp"
 #include <map>
 #include <functional>
 #include <cmath>
+#include <optional>
 
+extern std::random_device rd;
+extern std::mt19937 rng;
+double probability_generator();
 
 enum class ReceiverType {
     WORKER, STOREHOUSE
@@ -56,8 +59,22 @@ class ReceiverPreferences {
 class Receiver:public IPackageReceiver {
    public:
      Receiver() = default;
+     Receiver& operator=(Receiver& other) = default;
      void receive_package(Package& package) override {;};
      ReceiverType get_receiver_type() const override {return ReceiverType::WORKER;};
-}
+};
+
+
+class PackageSender {
+  public:
+  PackageSender(PackageSender&&) = default;
+  void send_package();
+  std::optional<Package>& get_sending_buffer(){return buffer;}
+  protected:
+  void push_package(Package&& package);
+  private:
+  ReceiverPreferences receiver_preferences;
+  std::optional<Package> buffer;
+};
 
 #endif //NODES_HPP
