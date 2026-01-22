@@ -4,6 +4,7 @@
 #include "Package.hpp"
 
 TEST(PackageQueueTest, queue_correctness){
+    //Test that checks if different queue type are implemented correctly
 PackageQueue Q1 = PackageQueue(QueueType::Lifo);
 PackageQueue Q2 = PackageQueue(QueueType::Fifo);
 Q1.push(Package(7));
@@ -13,6 +14,7 @@ Q2.push(Package(9));
 Package Px,Py;
 Px = Q1.pop();
 Py = Q2.pop();
-ASSERT_EQ(Px,Package(7));
-ASSERT_EQ(Py,Package(9));
+ASSERT_EQ(Px,Package(9));
+ASSERT_EQ(Py,Package(7));
 }
+
