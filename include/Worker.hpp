@@ -47,7 +47,7 @@ class Worker: public IPackageReceiver, public PackageSender{
     Time get_package_processing_start_time() const;
 
     //abstract methods from IPackageReciever
-    void recieve_package(Package&& p) override;
+    void receive_package(Package&& p) override;//fixed a typo reCEive
 
     ElementID get_id() const override;
 
@@ -63,7 +63,7 @@ class Worker: public IPackageReceiver, public PackageSender{
     TimeOffset pd_;
 
     std::unique_ptr<IPackageQueue> queue_;
-    std::optional<Package> currently_processed_package_;
+    std::optional<Package> currently_processed_package_; // optional so it can be also empty
 
     Time t_processing_start_;
 
