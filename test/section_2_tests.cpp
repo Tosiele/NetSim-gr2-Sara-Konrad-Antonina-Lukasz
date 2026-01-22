@@ -6,6 +6,7 @@
 #include "types.hpp"
 
 TEST(ReceiverPreferencesTest, probability_correctness){
+    //Tests if the probability of each receiver being chosen is equal and correct
   using preferences_t = std::map<IPackageReceiver*, double>;
   Receiver R1{};
   Receiver R2{};
@@ -34,6 +35,7 @@ double simple_func(){
 
 
 TEST(ReceiverPreferencesTest, choosing_correctness) {
+    //Tests if the receivers are chosen correctly using a mocked random generator
     using preferences_t = std::map<IPackageReceiver*, double>;
     Receiver R1{};
     Receiver R2{};
@@ -55,6 +57,7 @@ TEST(ReceiverPreferencesTest, choosing_correctness) {
 }
 
 TEST(PackageSenderTest, buffer_emptying) {
+    //Tests if the PackageSender buffer is emptied correctly after sending the package
     auto Q1 = std::make_unique<PackageQueue>(QueueType::Fifo);
     ExampleSender sender;
     Storehouse S = Storehouse(1,std::move(Q1));
@@ -68,6 +71,7 @@ TEST(PackageSenderTest, buffer_emptying) {
 }
 
 TEST(StorehoustTest, correct_storage) {
+    //Tests if the Storehouse stores packages correctly
     auto Q1 = std::make_unique<PackageQueue>(QueueType::Fifo);
     Storehouse S1 = Storehouse(1,std::move(Q1));
     auto Q2 = std::make_unique<PackageQueue>(QueueType::Lifo);
