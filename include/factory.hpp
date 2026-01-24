@@ -25,4 +25,6 @@ struct ParsedLineData {
 
 
 ParsedLineData parse_line(const std::string &line);
+
+Factory load_factory_structure(std::istream &is);
 #endif //NETSIM_GR2_SARA_KONRAD_ANTONINA_HELPERS_HPP

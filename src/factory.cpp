@@ -3,6 +3,9 @@
 //
 
 #include "../include/factory.hpp"
+#include "nodes.hpp"
+#include "types.hpp"
+
 ParsedLineData parse_line(const std::string &line) {
     ParsedLineData parsed_line;
     std::vector<std::string> tokens;
@@ -41,4 +44,44 @@ ParsedLineData parse_line(const std::string &line) {
     }
 
     return parsed_line;
+}
+
+Factory load_factory_structure(std::istream &is) {
+    Factory F{};
+    std::string line;
+
+    ElementID id;
+    TimeOffset di;
+    TimeOffset pd;
+
+    while (std::getline(is, line)) {
+        if (line.empty() or line.substr(0,1) == ";") {
+            continue;
+        }
+        ParsedLineData pdata = parse_line(line);
+        switch (pdata.element_type) {
+            case ElementType::RAMP:
+                id = std::stoi(pdata.parameters.at("id"));
+                di = std::stoi(pdata.parameters.at("delivery-interval"));
+                F.add_ramp(Ramp(id, di));
+            case ElementType::WORKER:
+                id = std::stoi(pdata.parameters.at("id"));
+                pd = std::stoi(pdata.parameters.at("processing-time"));
+                if (pdata.parameters.at("queue-type")=="FIFO") {
+                    F.add_worker(Worker(id, pd, std::make_unique<PackageQueue>(QueueType::Fifo)));
+                }
+                else if (pdata.parameters.at("queue-type")=="LIFO") {
+                    F.add_worker(Worker(id, pd,std::make_unique<PackageQueue>(QueueType::Lifo)));
+                }
+            case ElementType::STOREHOUSE:
+                id = std::stoi(pdata.parameters.at("id"));
+                F.add_storehouse(Storehouse(id));
+            case ElementType::LINK:
+                //TODO
+            case default:
+                throw std::invalid_argument("HOW???");
+
+        }
+    }
+    return F;
 }
