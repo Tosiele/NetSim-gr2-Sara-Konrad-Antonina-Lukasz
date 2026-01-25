@@ -1,72 +1,41 @@
-#ifndef FACTORY_HPP
-#define FACTORY_HPP
+//
+// Created by konfe on 24.01.2026.
+//
 
-#include "storage_types.hpp"
-#include "types.hpp"
+#ifndef NETSIM_GR2_SARA_KONRAD_ANTONINA_HELPERS_HPP
+#define NETSIM_GR2_SARA_KONRAD_ANTONINA_HELPERS_HPP
+#include <map>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <vector>
 
-template<class Node>
-class NodeCollection {
+#include "nodes.hpp"
 
-    public:
-        using container_t = typename std::list<Node>;
-        using iterator = typename container_t::iterator;
-        using const_iterator = typename container_t::const_iterator;
-
-        iterator begin() { return container.begin(); }
-        iterator end() { return container.end(); }
-        
-        const_iterator begin() const { return container.cbegin(); }
-        const_iterator end() const { return container.cend(); }
-        
-        const_iterator cbegin() const { return container.cbegin(); }
-        const_iterator cend() const { return container.cend(); }
-    
-
-        NodeCollection<Node>::iterator find_by_id(element_ID id) {
-
-            return std::find_if(container.begin(), container.end(),
-                                [id](const Node& ele) {return ele.get_id() == id;});
-
-        }
-
-        NodeCollection<Node>::const_iterator find_by_id(element_ID id) const {
-
-            return std::find_if(container.begin(), container.end(),
-                                [id](const Node& ele) {return ele.get_id() == id;});
-
-        }
-
-        void remove_by_id(element_ID id) {
-            auto it = find_by_id(id);
-            
-            if (it != container.end()) {
-                container.erase(it);
-            }
-
-        }
-        
-        void add(Node&& node){
-            container.push_back(std::move(node));
-        }
-
-    private:
-        container_t container;
+enum class ElementType { //or regular enum?
+    RAMP,
+    WORKER,
+    STOREHOUSE,
+    LINK
+};
+struct ParsedLineData {
+    ElementType element_type;
+    std::map<std::string, std::string> parameters;
+    //only for tests
+    bool operator==(const ParsedLineData &other) const {return (element_type == other.element_type && parameters == other.parameters);}
 };
 
-class Factory{
-    private:
-        template<class Node>
-        void remove_receiver(NodeCollection<Node>& collection, element_ID id);
 
-    
-    public:
+ParsedLineData parse_line(const std::string &line);
 
-    void do_deliveries(Time);
-    void do_package_passing();
-    void do_work(Time);
+Factory load_factory_structure(std::istream &is);
 
-    
+//helper functions for save_factory_structure
+std::ostream& receiver_save_func(ReceiverPreferences rp);
+void ramp_save_func(Ramp &ramp, std::ostream &os);
+void worker_save_func(Worker &worker, std::ostream &os);
+void storehouse_save_func(Storehouse &storehouse, std::ostream &os);
 
-};
+void save_factory_structure(Factory &factory, std::ostream &os);
 
-#endif //FACTORY_HPP
+#endif //NETSIM_GR2_SARA_KONRAD_ANTONINA_HELPERS_HPP
