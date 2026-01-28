@@ -1,7 +1,8 @@
 build/
 
 # VSCode
-.vscode/
+
+.vscode/*
 
 # Clion
 .idea/
