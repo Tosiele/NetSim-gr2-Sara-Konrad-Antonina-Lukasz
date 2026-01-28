@@ -2,8 +2,7 @@
 #define WORKER_hpp
 
 #include <iostream>
-#include <PackageSender.hpp>
-#include <IPackageReciever>
+#include <nodes.hpp>
 #include <types.hpp>
 #include "Package.hpp" 
 #include <memory>   // For std::unique_ptr
@@ -40,7 +39,7 @@ class Worker: public IPackageReceiver, public PackageSender{
     public:
     Worker(ElementID id, TimeOffset pd, std::unique_ptr<IPackageQueue> queue);
 
-    void do_works(Time t)
+    void do_works(Time t);
 
     TimeOffset get_processing_duration() const;
 
@@ -51,15 +50,15 @@ class Worker: public IPackageReceiver, public PackageSender{
 
     ElementID get_id() const override;
 
-    ReceiverType get_receiver_type(); const override
+    ReceiverType get_receiver_type() const override;
 
-    IPackageStockpile::const_iterator begin() const override;
-    IPackageStockpile::const_iterator end() const override;
-    IPackageStockpile::const_iterator cbegin() const override;
-    IPackageStockpile::const_iterator cend() const override;
+    IPackageStockpile::const_iterator begin() override;
+    IPackageStockpile::const_iterator end() override;
+    const IPackageStockpile::const_iterator cbegin() const override;
+    const IPackageStockpile::const_iterator cend() const override;
 
     // MODIFICATION TO SHARE DATA
-    std::optional<package> const& get_processing_buffer() const;
+    std::optional<Package> const& get_processing_buffer() const;
     
     private:
     ElementID id_;

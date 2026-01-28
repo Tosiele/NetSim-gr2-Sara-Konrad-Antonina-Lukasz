@@ -1,6 +1,6 @@
 #include "../include/factory.hpp"
-#include "nodes.hpp"
-#include "types.hpp"
+#include "../include/nodes.hpp"
+#include "../include/types.hpp"
 
 ParsedLineData parse_line(const std::string &line) {
     /*function that divides the given line and stores the result as ParsedLineData struct

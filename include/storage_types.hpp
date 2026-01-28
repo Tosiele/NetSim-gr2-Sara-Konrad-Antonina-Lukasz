@@ -50,7 +50,7 @@ class IPackageQueue : public IPackageStockpile {
   //virtual method pop for accessing and removing an element from the queue
     virtual Package pop() = 0;
   //virtual method get_queue_type for accessing the queue type
-    virtual const void get_queue_type() =0;
+    virtual QueueType get_queue_type() const =0;
   //default virtual destructor
     virtual ~IPackageQueue() {}
 };
@@ -66,7 +66,7 @@ class PackageQueue : public IPackageQueue {
     void push(Package&& p) override;
 
   //implementation of virtual method get_queue_type, calls global return_queue_type function
-  const void get_queue_type()override { return return_queue_type(qt); }
+  QueueType get_queue_type() const override { return qt; }
 
   //implementation of virtual methods [c]begin and [c]end, allow for read-only access of the queue
   const_iterator begin()  override { return packages.begin(); }
