@@ -1,36 +1,33 @@
-//
-// Created by konfe on 24.01.2026.
-//
-
-#ifndef NETSIM_GR2_SARA_KONRAD_ANTONINA_HELPERS_HPP
-#define NETSIM_GR2_SARA_KONRAD_ANTONINA_HELPERS_HPP
+#ifndef FACTORY_HPP
+#define FACTORY_HPP
 #include <map>
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <vector>
 
+#include "types.hpp"
 #include "nodes.hpp"
+#include "helpers.hpp"
 
-enum class ElementType {
-    //enumeration class that stores element types
-    //possible to pass in the configuration file
-    RAMP,
-    WORKER,
-    STOREHOUSE,
-    LINK
-};
-struct ParsedLineData {
-    //struct that stores the type of element
-    //along with all its properties as a map
-    ElementType element_type;
-    std::map<std::string, std::string> parameters;
-    //only for tests
-    bool operator==(const ParsedLineData &other) const {return (element_type == other.element_type && parameters == other.parameters);}
-};
+// Forward declarations
+class Ramp;
+class Worker;
+class Storehouse;
 
-//function that divides the given line and stores the result as ParsedLineData struct
-ParsedLineData parse_line(const std::string &line);
+
+class Factory{
+    private:
+        template<class Node>
+        void remove_receiver(NodeCollection<Node>& collection, ElementID id);
+
+    
+    public:
+
+    void do_deliveries(Time);
+    void do_package_passing();
+    void do_work(Time);
+};
 
 //function that makes a Factory based on the config file
 Factory load_factory_structure(std::istream &is);
@@ -44,4 +41,4 @@ void storehouse_save_func(Storehouse &storehouse, std::ostream &os);
 //function that makes a factory structure report
 void save_factory_structure(Factory &factory, std::ostream &os);
 
-#endif //NETSIM_GR2_SARA_KONRAD_ANTONINA_HELPERS_HPP
+#endif //FACTORY_HPP

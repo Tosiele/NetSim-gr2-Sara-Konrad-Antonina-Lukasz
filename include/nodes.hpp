@@ -1,7 +1,3 @@
-//
-// Created by konfe on 12.01.2026.
-//
-
 #ifndef NODES_HPP
 #define NODES_HPP
 #include "storage_types.hpp"
@@ -147,6 +143,5 @@ class ExampleSender:public PackageSender {
   ExampleSender() = default;
   void pusher() {push_package(Package(7));}
 };
-
 
 #endif //NODES_HPP
