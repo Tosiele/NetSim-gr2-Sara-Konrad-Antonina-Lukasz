@@ -12,6 +12,7 @@ add_library(NetSim
         src/Package.cpp
         src/nodes.cpp
         src/factory.cpp
+        src/Worker.cpp
 
 )
 
