@@ -11,8 +11,10 @@ add_library(NetSim
         src/storage_types.cpp
         src/Package.cpp
         src/nodes.cpp
+        src/helpers.cpp
         src/factory.cpp
-        src/Worker.cpp
+        src/reports.cpp
+
 
 )
 

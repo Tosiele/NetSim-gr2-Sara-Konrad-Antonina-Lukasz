@@ -8,8 +8,6 @@
 #include <vector>
 
 #include "nodes.hpp"
-#include "Ramp.hpp"
-#include "Worker.hpp"
 #include "Package.hpp"
 
 enum class ElementType {

@@ -3,8 +3,7 @@
 #include "storage_types.hpp"
 #include "Package.hpp"
 #include "nodes.hpp"
-#include "types.hpp"
-#include "Worker.hpp"
+#include "helpers.hpp"
 
 TEST(ReceiverPreferencesTest, probability_correctness) {
     //Tests if the probability of each receiver being chosen is equal and correct
@@ -30,9 +29,7 @@ TEST(ReceiverPreferencesTest, probability_correctness) {
   EXPECT_EQ(prefs.begin()->second,1);
 
  }
-double simple_func(){
-    return 0.4;
-}
+
 
 
 TEST(ReceiverPreferencesTest, choosing_correctness) {
@@ -105,8 +102,8 @@ TEST(WorkerTest, correct_queue_allocation) {
     W1.receive_package(Package(8));
     W2.receive_package(Package(9));
     W2.receive_package(Package(10));
-    EXPECT_EQ(S1.begin()->get_id(), 8);
-    EXPECT_EQ(S2.begin()->get_id(), 10); //both queue types are the same, because the difference is in pop method, not push
+    EXPECT_EQ(W1.begin()->get_id(), 8);
+    EXPECT_EQ(W2.begin()->get_id(), 10); //both queue types are the same, because the difference is in pop method, not push
 }
 
 TEST(WorkerTest, correct_queue_emptying) {

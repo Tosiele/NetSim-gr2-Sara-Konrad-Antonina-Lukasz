@@ -10,6 +10,7 @@
 #include <cmath>
 #include <memory>
 #include <optional>
+#include "helpers.hpp"
 /*
  *Includes all classes that represent different nodes in the factory simulation
  *along with some base classes that help in their implementation:
@@ -22,11 +23,7 @@
  *class Worker
  */
 
-//declarations for probability_generator implementation
-//Need to move to another file according to instruction!!!
-extern std::random_device rd;
-extern std::mt19937 rng;
-double probability_generator();
+
 
 enum class ReceiverType {
   //enumeration class that includes types of receivers
@@ -178,5 +175,89 @@ class ExampleSender:public PackageSender {
   void pusher() {push_package(Package(7));}
 };
 
+/*
+CLASS WORKER
+A constructor that takes a variable pd of type TimeOffset
+ (that says how long is his processing time) and a pointer to
+ IPackageQueue using smart pointers (std::unique_ptr),
+ because we don't know which queue type he will get
+
+method do_works that takes current simulation time and saves it
+ to know when his processing will be done using pd
+
+method get_processing_duration that returns pd
+
+method get_package_processing_start_time that returns when the package processing started
+
+*/
+
+class Worker: public IPackageReceiver, public PackageSender{
+    public:
+    Worker(ElementID id, TimeOffset pd, std::unique_ptr<IPackageQueue> queue);
+
+    void do_work(Time t);
+
+    TimeOffset get_processing_duration() const;
+
+    Time get_package_processing_start_time() const;
+
+    //abstract methods from IPackageReciever
+    void receive_package(Package&& p) override;//fixed a typo reCEive
+
+    ElementID get_id() const override;
+
+    ReceiverType get_receiver_type() const override;
+
+    IPackageStockpile::const_iterator begin() override;
+    IPackageStockpile::const_iterator end() override;
+    const IPackageStockpile::const_iterator cbegin() const override;
+    const IPackageStockpile::const_iterator cend() const override;
+
+    // MODIFICATION TO SHARE DATA
+    std::optional<Package> const& get_processing_buffer() const;
+    QueueType get_queue_type() const;
+
+    private:
+    ElementID id_;
+    TimeOffset pd_;
+
+    std::unique_ptr<IPackageQueue> queue_;
+    std::optional<Package> currently_processed_package_; // optional so it can be also empty
+
+    Time t_processing_start_;
+
+
+};
+
+
+/*
+CLASS RAMP
+Inherits from PackageSender
+Constructor takes id of type ElementID and di of type TimeOffset
+
+method deliver_goods called in simulation that takes current simulation time and determines if the new package should appear. If the package appears, it should be immediately put in the buffer of PackageSender
+method get_delivery_interval that returns di
+method get_id that returns current ElementID
+*/
+
+class Ramp : public PackageSender{
+public:
+  // constructor
+  Ramp(ElementID id, TimeOffset di);
+
+  // methods
+  void deliver_goods(Time t);
+
+  TimeOffset get_delivery_interval() const;
+
+  ElementID get_id() const;
+  // destructor
+  ~Ramp() = default;
+
+private:
+  ElementID id_;
+  TimeOffset di_;
+  Time t_last_delivery_;
+};
 
 #endif //NODES_HPP
