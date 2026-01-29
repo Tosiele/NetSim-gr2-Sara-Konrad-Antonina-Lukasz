@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(storage_types)
+project(NetSim)
 set(GOOGLETEST_VERSION 1.16.0)
 set(CMAKE_CXX_STANDARD 20)
 
@@ -7,24 +7,30 @@ enable_testing()
 
 add_subdirectory(googletest)
 
-add_library(storage_types
+add_library(NetSim
         src/storage_types.cpp
         src/Package.cpp
+        src/nodes.cpp
+        src/factory.cpp
+        src/Worker.cpp
+
 )
 
-target_include_directories(storage_types
+target_include_directories(NetSim
         PUBLIC include
 )
 
-add_executable(storage_types_tests
+add_executable(NetSim_tests
         test/section_1_tests.cpp
+        test/section_2_tests.cpp
+        test/section_4_tests.cpp
 )
 
-target_link_libraries(storage_types_tests
+target_link_libraries(NetSim_tests
         PRIVATE
-        storage_types
+        NetSim
         gtest
         gtest_main
 )
 
-add_test(NAME storage_types_tests COMMAND storage_types_tests)
+add_test(NAME NetSim_tests COMMAND NetSim_tests)

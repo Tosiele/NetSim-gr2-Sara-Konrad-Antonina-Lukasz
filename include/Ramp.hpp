@@ -1,7 +1,7 @@
-#ifndef RAMP_hpp
-#define RAMP_hpp
+#ifndef RAMP_HPP
+#define RAMP_HPP
 
-#include "PackageSender.hpp"
+#include "nodes.hpp"
 #include "types.hpp"
 
 /*
@@ -33,4 +33,4 @@ private:
     TimeOffset di_;
     Time t_last_delivery_;
 };
-#endif
+#endif // RAMP_HPP

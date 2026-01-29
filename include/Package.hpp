@@ -3,30 +3,35 @@
 
 #include <set>
 #include <iostream>
-using ElementID = long long;
+#include "types.hpp"
+//using ElementID = long long;
 
 class Package {
 public:
+    Package();//base constructor
 
-//three constructors: base, ID based, r-value based (moving)
-    Package();
+    Package(ElementID id); // 2. Constructor based on ElementID (z konkretnym ID)
 
-    Package(ElementID id);
+    Package(Package&& other) noexcept; // 3. Constructor based on other Package r-value (przenoszący)
 
-    Package(Package&& other) noexcept;
+    // --- METODY I OPERATORY ---
 
-//methods
-    bool operator==(const Package& other) const; //Equality operator
+    Package& operator=(Package&&) = default;
 
-    ElementID get_id() const;// id getter
+    // Package equality operator (czy paczki są takie same?)
+    bool operator==(const Package& other) const; // Zadanie: Equality operator
 
-//destructor
+    // Metoda pobierająca ID
+    ElementID get_id() const;
+
+    // --- DESTRUKTOR (Zadanie #4) ---
     ~Package();
 
 private:
-    ElementID id_;
+    ElementID id_; // Tutaj przechowujemy ID konkretnej paczki
 
-    // static lists of IDs that are currently in usage or freed
+    // --- POLA STATYCZNE (Zadanie: assigned_IDs list, freed_IDs list) ---
+    // Są statyczne (static), bo lista zajętych ID jest wspólna dla WSZYSTKICH paczek
     static std::set<ElementID> assigned_IDs;
     static std::set<ElementID> freed_IDs;
 };

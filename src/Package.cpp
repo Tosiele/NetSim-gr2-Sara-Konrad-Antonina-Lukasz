@@ -26,8 +26,8 @@ Package::Package(){
 Package::Package(ElementID id) {
     // (find(id) goes through all elements and if none of them match id, it returns {the end})
 
-    if (assigned_IDs.find(id) != assigned.IDs.end()){ //if given id is taken already, yell at user
-        throw std:: invalid_argument("this ID is already assigned"))
+    if (assigned_IDs.find(id) != assigned_IDs.end()){ //if given id is taken already, yell at user
+        throw std:: invalid_argument("this ID is already assigned");
     }
 
     id_ = id;
@@ -47,8 +47,8 @@ Package::Package(Package&& other) noexcept {
 // DESTRUCTOR
 Package::~Package(){
     if (id_ != 1){
-        assignedIDs.erase(id_)
-        freed_IDs.insert(id_)
+        assigned_IDs.erase(id_);
+        freed_IDs.insert(id_);
     }
     // if id is -1, the element is killed anyway, but it wont mess up the sets
 }

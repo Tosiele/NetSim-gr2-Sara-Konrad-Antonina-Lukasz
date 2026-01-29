@@ -1,5 +1,12 @@
 build/
 
+# VSCode
+
+.vscode/*
+
+# Clion
+.idea/
+
 # Prerequisites
 *.d
 
