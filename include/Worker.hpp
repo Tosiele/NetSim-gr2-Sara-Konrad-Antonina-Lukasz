@@ -59,6 +59,7 @@ class Worker: public IPackageReceiver, public PackageSender{
 
     // MODIFICATION TO SHARE DATA
     std::optional<Package> const& get_processing_buffer() const;
+    QueueType get_queue_type() const;
     
     private:
     ElementID id_;
