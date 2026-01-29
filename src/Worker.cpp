@@ -23,7 +23,7 @@ void Worker::do_works(Time t) { //method do_works that takes current simulation 
     currently_processed_package_.reset();
 }
     }
-
+}
 if (!currently_processed_package_ && !queue_->empty()) { // empty-handed worker and queue not empty
     currently_processed_package_ = queue_->pop(); // start a package, save the time
     t_processing_start_ = t;

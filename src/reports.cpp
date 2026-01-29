@@ -129,3 +129,88 @@ void structure_report(const Factory& f, std::ostream& os) {
         os << "\nSTOREHOUSE #" << s->get_id() << "\n";
     }
 }
+
+//=================================================
+//===============TURN REPORTS======================
+//=================================================
+
+void turn_report(const Factory& f, Time t, std::ostream& os) {
+    os << "=== [ Turn: " << t << " ] ===\n";
+
+//=================================================
+    os << "\n== WORKERS ==\n";
+
+    std::vector<const Worker*> workers;
+    for (auto it = f.worker_begin(); it != f.worker_end(); ++it) {
+        workers.push_back(&(*it));
+    }
+    std::sort(workers.begin(), workers.end(), [](const Worker* a, const Worker* b) {
+        return a->get_id() < b->get_id();
+    });
+
+    for (const auto* w : workers) {
+        os << "\nWORKER #" << w->get_id() << "\n";
+
+        os << "  PBuffer: ";
+        auto& p_buffer = w->get_processing_buffer();
+        if (p_buffer.has_value()) {
+            Time progress = t - w->get_package_processing_start_time() + 1;
+            os << "#" << p_buffer->get_id() << " (pt = " << progress << ")";
+        } else {
+            os << "(empty)";
+        }
+        os << "\n";
+
+        os << "  Queue: ";
+        if (w->begin() == w->end()) {
+            os << "(empty)";
+        } else {
+
+            bool first = true;
+            for (const auto& pkg : *w) { 
+                if (!first) os << ", "; 
+                os << "#" << pkg.get_id();
+                first = false;
+            }
+        }
+        os << "\n";
+
+
+        os << "  SBuffer: ";
+        auto& s_buffer = w->get_sending_buffer();
+        if (s_buffer.has_value()) {
+            os << "#" << s_buffer->get_id();
+        } else {
+            os << "(empty)";
+        }
+        os << "\n";
+    }
+
+//=================================================
+    os << "\n== STOREHOUSES ==\n";
+
+    std::vector<const Storehouse*> storehouses;
+    for (auto it = f.storehouse_begin(); it != f.storehouse_end(); ++it) {
+        storehouses.push_back(&(*it));
+    }
+    std::sort(storehouses.begin(), storehouses.end(), [](const Storehouse* a, const Storehouse* b) {
+        return a->get_id() < b->get_id();
+    });
+
+    for (const auto* s : storehouses) {
+        os << "\nSTOREHOUSE #" << s->get_id() << "\n";
+        
+        os << "  Stock: ";
+        if (s->begin() == s->end()) {
+            os << "(empty)";
+        } else {
+            bool first = true;
+            for (const auto& pkg : *s) {
+                if (!first) os << ", ";
+                os << "#" << pkg.get_id();
+                first = false;
+            }
+        }
+        os << "\n";
+    }
+}
