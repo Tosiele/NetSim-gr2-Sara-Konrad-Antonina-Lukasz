@@ -52,6 +52,68 @@ ParsedLineData parse_line(const std::string &line) {
     return parsed_line;
 }
 
+
+bool Factory::is_consistent() {
+    enum class NodeColor { UNVISITED, VISITED, VERIFIED };
+    // Marking all nodes as UNVISITED 
+    std::map<PackageSender*, NodeColor> color_map;
+    for (auto& ramp : Ramps) {
+        color_map[&ramp] = NodeColor::UNVISITED;
+    }
+    for (auto& worker : Workers) {
+        color_map[&worker] = NodeColor::UNVISITED;
+    }
+    // Recursive lambda function to check if sender has a reachable storehouse
+    std::function<bool(PackageSender*)> sender_has_reachable_storehouse = [&](PackageSender* sender) -> bool {
+        if (color_map[sender] == NodeColor::VERIFIED) {
+            return true;
+        }
+        color_map[sender] = NodeColor::VISITED;
+
+        if (sender->receiver_preferences.get_preferences().empty()) {
+            throw std::logic_error("Sender has no receivers");
+        }
+
+        bool sender_has_non_self_receiver = false;
+        for (const auto& [receiver_ptr, _] : sender->receiver_preferences.get_preferences()) {
+            if (receiver_ptr->get_receiver_type() == ReceiverType::STOREHOUSE) {
+                sender_has_non_self_receiver = true;
+            } else if (receiver_ptr->get_receiver_type() == ReceiverType::WORKER) {
+                auto worker_ptr = dynamic_cast<Worker*>(receiver_ptr);
+                auto sendrecv_ptr = dynamic_cast<PackageSender*>(worker_ptr);
+
+                if (sendrecv_ptr == sender) {
+                    continue;
+                }
+                sender_has_non_self_receiver = true;
+
+                if (color_map[sendrecv_ptr] == NodeColor::UNVISITED) {
+                    if (sender_has_reachable_storehouse(sendrecv_ptr)) {
+                        continue;
+                    }
+                }
+            }
+        }
+        color_map[sender] = NodeColor::VERIFIED;
+
+        if (sender_has_non_self_receiver) {
+            return true;
+        } else {
+            throw std::logic_error("No reachable storehouse");
+        }
+    };
+
+    for (auto& ramp : Ramps) {
+        if (color_map[&ramp] == NodeColor::VERIFIED) {
+            continue;
+        }
+        sender_has_reachable_storehouse(&ramp);
+    }
+
+    return true;
+}
+
+
 Factory load_factory_structure(std::istream &is) {
     /*function that makes a Factory based on the config file
      *takes the std::istream address (so it's possible to call on both std::cin and std::ifstream)

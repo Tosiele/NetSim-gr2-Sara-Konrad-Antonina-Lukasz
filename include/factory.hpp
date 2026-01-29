@@ -31,36 +31,6 @@ struct ParsedLineData {
 };
 
 
-template<class Node>
-class NodeCollection {
-    public:
-        using container_t = typename std::list<Node>;
-        using iterator = typename container_t::iterator;
-        using const_iterator = typename container_t::const_iterator;
-        // methods to add and remove nodes
-        void add(const Node&& node) { container.push_back(std::move(node)); }
-        void remove_by_id(ElementID id) {
-            container.remove_if([id](const Node& node){ return node.get_id() == id; });
-        }
-        // methods to find nodes by id
-        iterator find_by_id(ElementID id) {
-            return std::find_if(container.begin(), container.end(),
-                                [id](const Node& node){ return node.get_id() == id; });
-        }
-        const_iterator find_by_id(ElementID id) const {
-            return std::find_if(container.cbegin(), container.cend(),
-                                [id](const Node& node){ return node.get_id() == id; });
-        }
-        // iterator methods
-        iterator begin() { return container.begin(); }
-        iterator end() { return container.end(); }
-        const_iterator cbegin() const { return container.cbegin(); }
-        const_iterator cend() const { return container.cend(); }
-    private:
-        container_t container;
-    };
-
-
 class Factory{
     public:
         // Ramp methods
