@@ -19,7 +19,7 @@ add_library(NetSim
 )
 
 target_include_directories(NetSim
-        PUBLIC include
+        PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
 add_executable(NetSim_tests

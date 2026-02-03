@@ -52,6 +52,15 @@ ParsedLineData parse_line(const std::string &line) {
     return parsed_line;
 }
 
+// Ramp methods
+void Factory::add_ramp(Ramp&& ramp) { this->Ramps.add(std::move(ramp)); }
+void Factory::remove_ramp(ElementID id) { this->Ramps.remove_by_id(id); }
+// Worker methods
+void Factory::add_worker(Worker&& worker) { this->Workers.add(std::move(worker)); }
+void Factory::remove_worker(ElementID id) { this->Workers.remove_by_id(id); }
+// Storehouse methods
+void Factory::add_storehouse(Storehouse&& storehouse) { this->Storehouses.add(std::move(storehouse)); }
+void Factory::remove_storehouse(ElementID id) { this->Storehouses.remove_by_id(id); }
 
 bool Factory::is_consistent() {
     enum class NodeColor { UNVISITED, VISITED, VERIFIED };
@@ -113,6 +122,23 @@ bool Factory::is_consistent() {
     return true;
 }
 
+void Factory::do_deliveries(Time t) {
+    for (auto& ramp : this->Ramps) {
+        ramp.deliver_goods(t);
+    }
+}
+
+void Factory::do_package_passing() {
+    for (auto& worker : this->Workers) {
+        worker.send_package();
+    }
+}
+
+void Factory::do_work(Time t) {
+    for (auto& worker : this->Workers) {
+        worker.do_works(t);
+    }
+}
 
 Factory load_factory_structure(std::istream &is) {
     /*function that makes a Factory based on the config file
@@ -224,7 +250,7 @@ Factory load_factory_structure(std::istream &is) {
                             case default:
                                 //error handling
                                 throw std::invalid_argument("No matching receiver (RAMP can't be a receiver)");
-                        }
+                    }
                     case ElementType::WORKER:
                         //finding the correct worker in the Factory object
                         auto W_src = F.find_worker_by_id(src_id);
@@ -241,11 +267,11 @@ Factory load_factory_structure(std::istream &is) {
                             case default:
                                 //error handling
                                 throw std::invalid_argument("No matching receiver (RAMP can't be a receiver)");
-                        }
+                            }
                     case default:
                         //error handling
                         throw std::invalid_argument("No matching source (STOREHOUSE can't be a sender)");
-                }
+                    }
 
             case default:
                 //error handling

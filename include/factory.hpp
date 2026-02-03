@@ -32,21 +32,21 @@ struct ParsedLineData {
 class Factory{
     public:
         // Ramp methods
-        void add_ramp(const Ramp&& ramp);
+        void add_ramp(Ramp&& ramp);
         void remove_ramp(ElementID id);
         NodeCollection<Ramp>::iterator find_ramp_by_id(ElementID id);
         NodeCollection<Ramp>::const_iterator find_ramp_by_id(ElementID id) const;
         NodeCollection<Ramp>::const_iterator ramp_cbegin() const { return Ramps.cbegin(); }
         NodeCollection<Ramp>::const_iterator ramp_cend() const { return Ramps.cend(); }
         // Worker methods
-        void add_worker(const Worker&& worker);
+        void add_worker(Worker&& worker);
         void remove_worker(ElementID id);
         NodeCollection<Worker>::iterator find_worker_by_id(ElementID id);
         NodeCollection<Worker>::const_iterator find_worker_by_id(ElementID id) const;
         NodeCollection<Worker>::const_iterator worker_cbegin() const { return Workers.cbegin(); }
         NodeCollection<Worker>::const_iterator worker_cend() const { return Workers.cend(); }
         // Storehouse methods
-        void add_storehouse(const Storehouse&& storehouse);
+        void add_storehouse(Storehouse&& storehouse);
         void remove_storehouse(ElementID id);
         NodeCollection<Storehouse>::iterator find_storehouse_by_id(ElementID id);
         NodeCollection<Storehouse>::const_iterator find_storehouse_by_id(ElementID id) const;
