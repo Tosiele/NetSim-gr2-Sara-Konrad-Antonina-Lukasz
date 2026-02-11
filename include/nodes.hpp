@@ -138,7 +138,7 @@ class PackageSender {
   //method send_package that sends the package to a receiver
   void send_package();
   //method get_sending_buffer that returns the current state of the std::optional buffer
-  std::optional<Package>& get_sending_buffer(){return buffer;}
+  const std::optional<Package>& get_sending_buffer() const {return buffer;}
   ReceiverPreferences receiver_preferences;
   protected:
   //method push_package that inputs the package into the buffer

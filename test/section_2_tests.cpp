@@ -61,10 +61,10 @@ TEST(PackageSenderTest, buffer_emptying) {
     Storehouse S = Storehouse(1,std::move(Q1));
     sender.receiver_preferences.add_receiver(&S);
     sender.pusher(); //when actual class implemented, replace this with an actual method that invokes push_package
-    auto b = std::move(sender.get_sending_buffer());
+    auto& b = sender.get_sending_buffer();
     ASSERT_TRUE(b.has_value());
     sender.send_package();
-    auto b2 = std::move(sender.get_sending_buffer());
+    auto& b2 = std::move(sender.get_sending_buffer());
     ASSERT_FALSE(b2.has_value());
 }
 

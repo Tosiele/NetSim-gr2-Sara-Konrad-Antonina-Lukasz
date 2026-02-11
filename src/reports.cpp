@@ -8,9 +8,9 @@
 
 // queue type -> string
 
-std::string queue_to_string(PackageQueueType type) {
-    if (type == PackageQueueType::FIFO) return "FIFO";
-    if (type == PackageQueueType::LIFO) return "LIFO";
+std::string queue_to_string(QueueType type) {
+    if (type == QueueType::Fifo) return "FIFO";
+    if (type == QueueType::Lifo) return "LIFO";
     return "Unknown";
 }
 
@@ -42,7 +42,7 @@ void structure_report(const Factory& f, std::ostream& os) {
 
     //collecting all pointers to ramps in a stdvector
     std::vector<const Ramp*> ramps;
-    for (auto it = f.ramp_begin(); it != f.ramp_end(); ++it) {
+    for (auto it = f.ramp_cbegin(); it != f.ramp_cend(); ++it) {
         ramps.push_back(&(*it)); // &(*it) zamienia iterator na zwykły wskaźnik
     }
 
@@ -58,7 +58,7 @@ void structure_report(const Factory& f, std::ostream& os) {
         os << "  Receivers:\n";
 
         // sorting recievers
-        auto receivers_map = r->receiver_preferences_.get_preferences();
+        auto receivers_map = r->receiver_preferences;
         std::vector<const IPackageReceiver*> sorted_receivers;
         
         // vetor of keys (pointers to recievers)
@@ -80,7 +80,7 @@ void structure_report(const Factory& f, std::ostream& os) {
 
     // pointers
     std::vector<const Worker*> workers;
-    for (auto it = f.worker_begin(); it != f.worker_end(); ++it) {
+    for (auto it = f.worker_cbegin(); it != f.worker_cend(); ++it) {
         workers.push_back(&(*it));
     }
 
@@ -97,7 +97,7 @@ void structure_report(const Factory& f, std::ostream& os) {
         os << "  Receivers:\n";
 
         // sorting receivers
-        auto receivers_map = w->receiver_preferences_.get_preferences();
+        auto receivers_map = w->receiver_preferences;
         std::vector<const IPackageReceiver*> sorted_receivers;
         for (const auto& pair : receivers_map) {
             sorted_receivers.push_back(pair.first);
@@ -115,7 +115,7 @@ void structure_report(const Factory& f, std::ostream& os) {
 
     // pointers
     std::vector<const Storehouse*> storehouses;
-    for (auto it = f.storehouse_begin(); it != f.storehouse_end(); ++it) {
+    for (auto it = f.storehouse_cbegin(); it != f.storehouse_cend(); ++it) {
         storehouses.push_back(&(*it));
     }
 
@@ -141,7 +141,7 @@ void turn_report(const Factory& f, Time t, std::ostream& os) {
     os << "\n== WORKERS ==\n";
 
     std::vector<const Worker*> workers;
-    for (auto it = f.worker_begin(); it != f.worker_end(); ++it) {
+    for (auto it = f.worker_cbegin(); it != f.worker_cend(); ++it) {
         workers.push_back(&(*it));
     }
     std::sort(workers.begin(), workers.end(), [](const Worker* a, const Worker* b) {
@@ -162,13 +162,14 @@ void turn_report(const Factory& f, Time t, std::ostream& os) {
         os << "\n";
 
         os << "  Queue: ";
-        if (w->begin() == w->end()) {
+        if (w->cbegin() == w->cend()) {
             os << "(empty)";
         } else {
 
             bool first = true;
-            for (const auto& pkg : *w) { 
-                if (!first) os << ", "; 
+            for (auto it = w->cbegin(); it != w->cend(); ++it){
+                const auto& pkg = *it;
+                if (!first) os << ", ";
                 os << "#" << pkg.get_id();
                 first = false;
             }
@@ -190,7 +191,7 @@ void turn_report(const Factory& f, Time t, std::ostream& os) {
     os << "\n== STOREHOUSES ==\n";
 
     std::vector<const Storehouse*> storehouses;
-    for (auto it = f.storehouse_begin(); it != f.storehouse_end(); ++it) {
+    for (auto it = f.storehouse_cbegin(); it != f.storehouse_cend(); ++it) {
         storehouses.push_back(&(*it));
     }
     std::sort(storehouses.begin(), storehouses.end(), [](const Storehouse* a, const Storehouse* b) {
@@ -201,11 +202,12 @@ void turn_report(const Factory& f, Time t, std::ostream& os) {
         os << "\nSTOREHOUSE #" << s->get_id() << "\n";
         
         os << "  Stock: ";
-        if (s->begin() == s->end()) {
+        if (s->cbegin() == s->cend()) {
             os << "(empty)";
         } else {
             bool first = true;
-            for (const auto& pkg : *s) {
+            for (auto it = s->cbegin(); it != s->cend(); ++it){
+                const auto& pkg = *it;
                 if (!first) os << ", ";
                 os << "#" << pkg.get_id();
                 first = false;
