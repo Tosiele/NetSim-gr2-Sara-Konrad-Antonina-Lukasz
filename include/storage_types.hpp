@@ -20,7 +20,7 @@
     Fifo, Lifo
 };
 
-void return_queue_type(QueueType t); //function that returns queue type of object
+std::string return_queue_type(QueueType t); //function that returns queue type of object
 
 class IPackageStockpile {
   //interface that initializes basic item storing methods

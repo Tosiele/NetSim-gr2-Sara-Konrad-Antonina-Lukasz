@@ -53,12 +53,18 @@ ParsedLineData parse_line(const std::string &line) {
 }
 
 // Ramp methods
+NodeCollection<Ramp>::iterator Factory::find_ramp_by_id(ElementID id) {return this->Ramps.find_by_id(id);}
+NodeCollection<Ramp>::const_iterator Factory::find_ramp_by_id(ElementID id) const{return this->Ramps.find_by_id(id);}
 void Factory::add_ramp(Ramp&& ramp) { this->Ramps.add(std::move(ramp)); }
 void Factory::remove_ramp(ElementID id) { this->Ramps.remove_by_id(id); }
 // Worker methods
+NodeCollection<Worker>::iterator Factory::find_worker_by_id(ElementID id) {return this->Workers.find_by_id(id);}
+NodeCollection<Worker>::const_iterator Factory::find_worker_by_id(ElementID id) const{return this->Workers.find_by_id(id);}
 void Factory::add_worker(Worker&& worker) { this->Workers.add(std::move(worker)); }
 void Factory::remove_worker(ElementID id) { this->Workers.remove_by_id(id); }
 // Storehouse methods
+NodeCollection<Storehouse>::iterator Factory::find_storehouse_by_id(ElementID id) {return this->Storehouses.find_by_id(id);}
+NodeCollection<Storehouse>::const_iterator Factory::find_storehouse_by_id(ElementID id) const{return this->Storehouses.find_by_id(id);}
 void Factory::add_storehouse(Storehouse&& storehouse) { this->Storehouses.add(std::move(storehouse)); }
 void Factory::remove_storehouse(ElementID id) { this->Storehouses.remove_by_id(id); }
 
@@ -136,7 +142,7 @@ void Factory::do_package_passing() {
 
 void Factory::do_work(Time t) {
     for (auto& worker : this->Workers) {
-        worker.do_works(t);
+        worker.do_work(t);
     }
 }
 
@@ -165,16 +171,18 @@ Factory load_factory_structure(std::istream &is) {
         }
         //calling the parse_line function
         ParsedLineData pdata = parse_line(line);
-
         //handling different cases based on element type
         switch (pdata.element_type) {
-            case ElementType::RAMP:
+            case ElementType::RAMP: {
                 //converting the parameters to correct types
                 //and adding the ramp to the factory
                 id = std::stoi(pdata.parameters.at("id"));
                 di = std::stoi(pdata.parameters.at("delivery-interval"));
                 F.add_ramp(Ramp(id, di));
-            case ElementType::WORKER:
+                break;
+            }
+
+            case ElementType::WORKER: {
                 //converting the parameters to correct types
                 //and adding the worker to the factory
                 id = std::stoi(pdata.parameters.at("id"));
@@ -189,19 +197,26 @@ Factory load_factory_structure(std::istream &is) {
                 else {
                     throw std::invalid_argument("No matching queue type");
                 }
-            case ElementType::STOREHOUSE:
+                break;
+            }
+
+
+            case ElementType::STOREHOUSE: {
                 //converting the parameters to correct types
                 //and adding the storehouse to the factory
                 id = std::stoi(pdata.parameters.at("id"));
                 F.add_storehouse(Storehouse(id));
-            case ElementType::LINK:
+                break;
+            }
+
+            case ElementType::LINK: {
                 //creation of a connection between two nodes
 
                 //defining helpful variables
                 std::map<std::string,ElementType> nodes{
-            {"ramp",ElementType::RAMP},
-            {"worker",ElementType::WORKER},
-            {"storehouse",ElementType::STOREHOUSE}
+                {"ramp",ElementType::RAMP},
+                {"worker",ElementType::WORKER},
+                {"store",ElementType::STOREHOUSE}
                 };
                 src = pdata.parameters.at("src");
                 dest = pdata.parameters.at("dest");
@@ -234,46 +249,59 @@ Factory load_factory_structure(std::istream &is) {
                 }
                 //defining behavior based on source type
                 switch (src_type) {
-                    case ElementType::RAMP:
+                    case ElementType::RAMP: {
                         //finding the correct ramp in the Factory object
                         auto R_src = F.find_ramp_by_id(src_id);
                         //defining behavior based on destination type
                         switch (dest_type) {
-                            case ElementType::WORKER:
+                            case ElementType::WORKER: {
                                 //finding the correct worker and assigning it as a ramp's receiver
                                 auto W_dest = F.find_worker_by_id(dest_id);
                                 R_src->receiver_preferences.add_receiver(&(*W_dest));
-                            case ElementType::STOREHOUSE:
+                                break;
+                            }
+                            case ElementType::STOREHOUSE: {
                                 //finding the correct storehouse and assigning it as a ramp's receiver
                                 auto S_dest = F.find_storehouse_by_id(dest_id);
                                 R_src->receiver_preferences.add_receiver(&(*S_dest));
-                            case default:
+                                break;
+                            }
+                            default:
                                 //error handling
                                 throw std::invalid_argument("No matching receiver (RAMP can't be a receiver)");
+                        }
+                        break;
                     }
-                    case ElementType::WORKER:
+                    case ElementType::WORKER: {
                         //finding the correct worker in the Factory object
                         auto W_src = F.find_worker_by_id(src_id);
                         //defining behavior based on destination type
                         switch (dest_type) {
-                            case ElementType::WORKER:
+                            case ElementType::WORKER: {
                                 //finding the correct worker and assigning it as a worker's receiver
                                 auto W_dest = F.find_worker_by_id(dest_id);
                                 W_src->receiver_preferences.add_receiver(&(*W_dest));
-                            case ElementType::STOREHOUSE:
+                                break;
+                            }
+                            case ElementType::STOREHOUSE: {
                                 //finding the correct storehouse and assigning it as a worker's receiver
                                 auto S_dest = F.find_storehouse_by_id(dest_id);
-                                S_dest->receiver_preferences.add_receiver(&(*S_dest));
-                            case default:
+                                W_src->receiver_preferences.add_receiver(&(*S_dest));
+                                break;
+                            }
+                            default:
                                 //error handling
                                 throw std::invalid_argument("No matching receiver (RAMP can't be a receiver)");
-                            }
-                    case default:
+                        }
+                        break;
+                    }
+                    default:
                         //error handling
                         throw std::invalid_argument("No matching source (STOREHOUSE can't be a sender)");
-                    }
-
-            case default:
+                }
+                break;
+            }
+            default:
                 //error handling
                 //but impossible to get
                 //since this error should already be handled
@@ -291,7 +319,7 @@ std::string receiver_save_func(auto &rp) {
     //defining the logic of outputting receiver
     //as to not repeat the code twice
     std::ostringstream ss;
-    ss <<"\tReceivers:\n";
+    ss <<"  Receivers:\n";
     std::map<ReceiverType,std::string> receivers{
         {ReceiverType::WORKER,"worker"},
         {ReceiverType::STOREHOUSE,"storehouse"}
@@ -299,28 +327,28 @@ std::string receiver_save_func(auto &rp) {
     for (auto it = rp.begin(); it != rp.end(); ++it) {
         ReceiverType r = it->first->get_receiver_type();
         ElementID id = it->first->get_id();
-        ss<<"\t\t"<<receivers.at(r)<<" #"<<id<<"\n";
+        ss<<"    "<<receivers.at(r)<<" #"<<id<<"\n";
     }
     return ss.str();
 }
 
-void ramp_save_func (Ramp &ramp, std::ostream &os) {
+void ramp_save_func (const Ramp &ramp, std::ostream &os) {
     //defining the logic of outputting ramp specs
     //to pass in std::for_each function
     os << "LOADING RAMP #" << ramp.get_id() << "\n";
-    os << "\tDelivery interval: " << ramp.get_delivery_interval() << "\n" ;
-    os << receiver_save_func(ramp.get_preferences()) << "\n";
+    os << "  Delivery interval: " << ramp.get_delivery_interval() << "\n" ;
+    os << receiver_save_func(ramp.receiver_preferences) << "\n";
 }
-void worker_save_func (Worker &worker, std::ostream &os) {
+void worker_save_func (const Worker &worker, std::ostream &os) {
     //defining the logic of outputting worker specs
     //to pass in std::for_each function
     os << "WORKER #" << worker.get_id() << "\n";
-    os << "\tProcessing time:" << worker.get_processing_duration() << "\n";
-    os << "\tQueue type:" << worker.get_queue() << "\n";
-    os << receiver_save_func(worker.get_preferences()) << "\n";
+    os << "  Processing time: " << worker.get_processing_duration() << "\n";
+    os << "  Queue type: " << return_queue_type(worker.get_queue_type()) << "\n";
+    os << receiver_save_func(worker.receiver_preferences) << "\n";
 }
 
-void storehouse_save_func (Storehouse &storehouse, std::ostream &os) {
+void storehouse_save_func (const Storehouse &storehouse, std::ostream &os) {
     //defining the logic of outputting storehouse specs
     //to pass in std::for_each function
     os << "STOREHOUSE #" << storehouse.get_id() << "\n";
@@ -333,11 +361,11 @@ void save_factory_structure (Factory &factory, std::ostream &os) {
      *returns nothing
      */
     os<<"\n== LOADING RAMPS ==\n\n";
-    std::for_each(factory.ramp_cbegin,factory.ramp_cend,ramp_save_func);
+    std::for_each(factory.ramp_cbegin(),factory.ramp_cend(),[&](const Ramp& r) {ramp_save_func(r, os);});
     os<<"\n== WORKERS ==\n\n";
-    std::for_each(factory.worker_cbegin,factory.worker_cend,worker_save_func);
+    std::for_each(factory.worker_cbegin(),factory.worker_cend(),[&](const Worker& w) {worker_save_func(w, os);});
     os<<"\n== STOREHOUSES ==\n\n";
-    std::for_each(factory.storehouse_cbegin,factory.storehouse_cend,storehouse_save_func);
+    std::for_each(factory.storehouse_cbegin(),factory.storehouse_cend(),[&](const Storehouse& s) {storehouse_save_func(s, os);});
 
 }
 

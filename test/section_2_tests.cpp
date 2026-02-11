@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "storage_types.hpp"
-#include "Package.hpp"
-#include "nodes.hpp"
-#include "helpers.hpp"
+#include "../include/storage_types.hpp"
+#include "../include/Package.hpp"
+#include "../include/nodes.hpp"
+#include "../include/helpers.hpp"
 
 TEST(ReceiverPreferencesTest, probability_correctness) {
     //Tests if the probability of each receiver being chosen is equal and correct
@@ -61,10 +61,10 @@ TEST(PackageSenderTest, buffer_emptying) {
     Storehouse S = Storehouse(1,std::move(Q1));
     sender.receiver_preferences.add_receiver(&S);
     sender.pusher(); //when actual class implemented, replace this with an actual method that invokes push_package
-    auto b = std::move(sender.get_sending_buffer());
+    auto& b = sender.get_sending_buffer();
     ASSERT_TRUE(b.has_value());
     sender.send_package();
-    auto b2 = std::move(sender.get_sending_buffer());
+    auto& b2 = std::move(sender.get_sending_buffer());
     ASSERT_FALSE(b2.has_value());
 }
 
