@@ -78,9 +78,9 @@ Factory load_factory_structure(std::istream &is);
 // helper functions for save_factory_structure
 
 std::string receiver_save_func(auto &rp);
-void ramp_save_func(Ramp &ramp, std::ostream &os);
-void worker_save_func(Worker &worker, std::ostream &os);
-void storehouse_save_func(Storehouse &storehouse, std::ostream &os);
+void ramp_save_func(const Ramp &ramp, std::ostream &os);
+void worker_save_func(const Worker &worker, std::ostream &os);
+void storehouse_save_func(const Storehouse &storehouse, std::ostream &os);
 
 
 // function that makes a factory structure report

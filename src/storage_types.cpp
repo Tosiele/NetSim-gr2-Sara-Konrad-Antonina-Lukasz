@@ -1,17 +1,17 @@
 #include <iostream>
 #include "storage_types.hpp"
 
-void return_queue_type(const QueueType t) {
-    /*function that outputs queue type name based on QueueType
+std::string return_queue_type(const QueueType t) {
+    /*function that returns queue type name based on QueueType
     takes const QueueType
-    returns nothing
+    returns std::string
     */
     switch (t) {
         case QueueType::Fifo:
-            std::cout << "fifo" << std::endl;
+            return "FIFO";
         break;
         case QueueType::Lifo:
-            std::cout << "lifo" << std::endl;
+            return "LIFO";
         break;
         default:
             throw std::invalid_argument("Invalid QueueType");

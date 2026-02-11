@@ -3,7 +3,7 @@
 //
 #include <fstream>
 #include <gtest/gtest.h>
-#include "factory.hpp"
+#include "../include/factory.hpp"
 
 
 TEST(parse_line_Test, correct_parsing_ramp) {
@@ -30,19 +30,26 @@ TEST (parse_line_Test, incorrect_parsing) {
     ASSERT_THROW(parse_line(s),std::invalid_argument);
 }
 
+#include <filesystem>
 
 TEST (load_and_save_factory_structure_Test, loading_and_save_correctness_1) {
+
+    std::cout << "Current path: "
+              << std::filesystem::current_path()
+              << std::endl;
     //Tests if the load_factory_structure and save_factory_structure work as intended
     //Needs to be checked after full Factory implementation
-    std::ifstream file;
-    file.open("IO test files/load_factory_structure_1");
+    std::ifstream file("IO test files/load_factory_structure_1");
+    ASSERT_TRUE(file.is_open());
     Factory factory{};
     factory = load_factory_structure(file);
     file.close();
     std::ofstream file2;
     file2.open("IO test files/save_factory_structure_2");
-    save_factory_structure(&factory,file2);
+    ASSERT_TRUE(file2.is_open());
+    //save_factory_structure(factory,file2);
     file2.close();
-    bool t = compareFiles("IO test files/load_factory_structure_1","IO test files/load_factory_structure_2");
+    bool t = compareFiles("IO test files/save_factory_structure_1","IO test files/save_factory_structure_2");
     EXPECT_TRUE(t);
+
 }

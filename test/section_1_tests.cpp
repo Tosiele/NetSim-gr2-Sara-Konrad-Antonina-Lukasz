@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "storage_types.hpp"
-#include "Package.hpp"
+#include "../include/storage_types.hpp"
+#include "../include/Package.hpp"
 
 TEST(PackageQueueTest, queue_correctness){
     //Test that checks if different queue type are implemented correctly

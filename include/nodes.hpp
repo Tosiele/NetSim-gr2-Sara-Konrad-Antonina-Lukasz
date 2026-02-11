@@ -38,7 +38,7 @@ class NodeCollection {
       using iterator = typename container_t::iterator;
       using const_iterator = typename container_t::const_iterator;
       // methods to add and remove nodes
-      void add(const Node&& node) { container.push_back(std::move(node)); }
+      void add(Node&& node) { container.push_back(std::move(node)); }
       void remove_by_id(ElementID id) {
           container.remove_if([id](const Node& node){ return node.get_id() == id; });
       }
@@ -194,7 +194,7 @@ method get_package_processing_start_time that returns when the package processin
 class Worker: public IPackageReceiver, public PackageSender{
     public:
     Worker(ElementID id, TimeOffset pd, std::unique_ptr<IPackageQueue> queue);
-
+    Worker(Worker&&) = default;
     void do_work(Time t);
 
     TimeOffset get_processing_duration() const;
@@ -244,7 +244,7 @@ class Ramp : public PackageSender{
 public:
   // constructor
   Ramp(ElementID id, TimeOffset di);
-
+  Ramp(Ramp&&) = default;
   // methods
   void deliver_goods(Time t);
 

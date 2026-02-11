@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "storage_types.hpp"
-#include "Package.hpp"
-#include "nodes.hpp"
-#include "helpers.hpp"
+#include "../include/storage_types.hpp"
+#include "../include/Package.hpp"
+#include "../include/nodes.hpp"
+#include "../include/helpers.hpp"
 
 TEST(ReceiverPreferencesTest, probability_correctness) {
     //Tests if the probability of each receiver being chosen is equal and correct
