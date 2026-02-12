@@ -77,7 +77,7 @@ Factory load_factory_structure(std::istream &is);
 
 // helper functions for save_factory_structure
 
-std::string receiver_save_func(auto &rp);
+void link_save_func(auto& rec, std::ostream& os, std::string type);
 void ramp_save_func(const Ramp &ramp, std::ostream &os);
 void worker_save_func(const Worker &worker, std::ostream &os);
 void storehouse_save_func(const Storehouse &storehouse, std::ostream &os);

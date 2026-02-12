@@ -135,6 +135,9 @@ void Factory::do_deliveries(Time t) {
 }
 
 void Factory::do_package_passing() {
+    for (auto& ramp : this->Ramps) {
+        ramp.send_package();
+    }
     for (auto& worker : this->Workers) {
         worker.send_package();
     }
@@ -315,43 +318,43 @@ Factory load_factory_structure(std::istream &is) {
 }
 
 //helper functions for save_factory_structure
-std::string receiver_save_func(auto &rp) {
+void link_save_func(auto& rec, std::ostream& os, std::string type) {
     //defining the logic of outputting receiver
     //as to not repeat the code twice
-    std::ostringstream ss;
-    ss <<"  Receivers:\n";
+    auto& rp = rec.receiver_preferences;
     std::map<ReceiverType,std::string> receivers{
         {ReceiverType::WORKER,"worker"},
-        {ReceiverType::STOREHOUSE,"storehouse"}
+        {ReceiverType::STOREHOUSE,"store"}
         };
+    os<<"\n";
     for (auto it = rp.begin(); it != rp.end(); ++it) {
+        os <<"\nLINK src=" << type << "-" << rec.get_id();
         ReceiverType r = it->first->get_receiver_type();
         ElementID id = it->first->get_id();
-        ss<<"    "<<receivers.at(r)<<" #"<<id<<"\n";
+        os<<" dest="<<receivers.at(r)<<"-"<<id;
     }
-    return ss.str();
+
+
 }
 
 void ramp_save_func (const Ramp &ramp, std::ostream &os) {
     //defining the logic of outputting ramp specs
     //to pass in std::for_each function
-    os << "LOADING RAMP #" << ramp.get_id() << "\n";
-    os << "  Delivery interval: " << ramp.get_delivery_interval() << "\n" ;
-    os << receiver_save_func(ramp.receiver_preferences) << "\n";
+    os << "LOADING_RAMP id=" << ramp.get_id();
+    os << " delivery-interval=" << ramp.get_delivery_interval() << "\n";
 }
 void worker_save_func (const Worker &worker, std::ostream &os) {
     //defining the logic of outputting worker specs
     //to pass in std::for_each function
-    os << "WORKER #" << worker.get_id() << "\n";
-    os << "  Processing time: " << worker.get_processing_duration() << "\n";
-    os << "  Queue type: " << return_queue_type(worker.get_queue_type()) << "\n";
-    os << receiver_save_func(worker.receiver_preferences) << "\n";
+    os << "WORKER id=" << worker.get_id();
+    os << " processing-time=" << worker.get_processing_duration();
+    os << " queue-type=" << return_queue_type(worker.get_queue_type()) << "\n";
 }
 
 void storehouse_save_func (const Storehouse &storehouse, std::ostream &os) {
     //defining the logic of outputting storehouse specs
     //to pass in std::for_each function
-    os << "STOREHOUSE #" << storehouse.get_id() << "\n";
+    os << "STOREHOUSE id=" << storehouse.get_id() << "\n";
 }
 
 void save_factory_structure (Factory &factory, std::ostream &os) {
@@ -360,12 +363,16 @@ void save_factory_structure (Factory &factory, std::ostream &os) {
      *and the std::ostream address (so it's possible to call on both std::cout and std::ofstream)
      *returns nothing
      */
-    os<<"\n== LOADING RAMPS ==\n\n";
+    os<<"; == LOADING RAMPS ==\n\n";
     std::for_each(factory.ramp_cbegin(),factory.ramp_cend(),[&](const Ramp& r) {ramp_save_func(r, os);});
-    os<<"\n== WORKERS ==\n\n";
+    os<<"\n; == WORKERS ==\n\n";
     std::for_each(factory.worker_cbegin(),factory.worker_cend(),[&](const Worker& w) {worker_save_func(w, os);});
-    os<<"\n== STOREHOUSES ==\n\n";
+    os<<"\n; == STOREHOUSES ==\n\n";
     std::for_each(factory.storehouse_cbegin(),factory.storehouse_cend(),[&](const Storehouse& s) {storehouse_save_func(s, os);});
+    os<<"\n; == LINKS ==";
+    std::for_each(factory.ramp_cbegin(),factory.ramp_cend(),[&](const Ramp& r) {link_save_func(r, os, "ramp");});
+    std::for_each(factory.worker_cbegin(),factory.worker_cend(),[&](const Worker& w) {link_save_func(w, os, "worker");});
+
 
 }
 

@@ -76,7 +76,7 @@ void structure_report(const Factory& f, std::ostream& os) {
         }
     }
 //=================================================
-    os << "\n== WORKERS ==\n";
+    os << "\n\n== WORKERS ==\n";
 
     // pointers
     std::vector<const Worker*> workers;
@@ -111,7 +111,7 @@ void structure_report(const Factory& f, std::ostream& os) {
     }
 
 //=================================================
-    os << "\n== STOREHOUSES ==\n";
+    os << "\n\n== STOREHOUSES ==\n";
 
     // pointers
     std::vector<const Storehouse*> storehouses;
@@ -213,6 +213,19 @@ void turn_report(const Factory& f, Time t, std::ostream& os) {
                 first = false;
             }
         }
-        os << "\n";
     }
+}
+
+bool SpecificTurnsReportNotifier::should_generate_report (const Time t) const {
+    if (std::find(turn_list.begin(),turn_list.end(),t)==turn_list.end()) {
+        return false;
+    }
+    return true;
+}
+
+bool IntervalReportNotifier::should_generate_report (const Time t) const {
+    if ((t-1)%interval == 0) {
+        return true;
+    }
+    return false;
 }

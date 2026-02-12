@@ -13,4 +13,20 @@ void structure_report(const Factory& f, std::ostream& os);
 
 void turn_report(const Factory& f, Time t, std::ostream& os);
 
+class SpecificTurnsReportNotifier {
+    public:
+    SpecificTurnsReportNotifier(const std::set<Time> &turns) {turn_list = turns;}
+    bool should_generate_report ( Time t) const;
+    private:
+    std::set<Time> turn_list;
+};
+
+class IntervalReportNotifier {
+    public:
+    IntervalReportNotifier(const Time &inter) {interval = inter;}
+    bool should_generate_report ( Time t) const;
+    private:
+    Time interval;
+};
+
 #endif
