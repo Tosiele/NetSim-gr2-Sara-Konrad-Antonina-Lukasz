@@ -14,6 +14,7 @@ add_library(NetSim
         src/helpers.cpp
         src/factory.cpp
         src/reports.cpp
+        src/simulation.cpp
 
 
 )
@@ -26,6 +27,7 @@ add_executable(NetSim_tests
         test/section_1_tests.cpp
         test/section_2_tests.cpp
         test/section_4_tests.cpp
+        test/section_5_tests.cpp
 )
 
 target_link_libraries(NetSim_tests

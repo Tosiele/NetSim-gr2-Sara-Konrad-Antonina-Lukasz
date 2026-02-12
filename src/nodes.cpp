@@ -67,8 +67,11 @@ void PackageSender::send_package() {
    returns nothing
    */
   IPackageReceiver* R = receiver_preferences.choose_receiver();
-  R->receive_package(std::move(buffer.value()));
-  buffer.reset();
+    if (buffer.has_value()) {
+        R->receive_package(std::move(buffer.value()));
+        buffer.reset();
+    }
+
 }
 
 void Storehouse::receive_package(Package&& package) {
